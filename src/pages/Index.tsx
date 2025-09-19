@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Upload } from "lucide-react";
 import NeuroSightTitle from "@/components/NeuroSightTitle";
 import AnalysisOptions from "@/components/AnalysisOptions";
 import AnalysisCenter from "@/components/AnalysisCenter";
@@ -6,12 +7,16 @@ import ThreatHeatMap from "@/components/ThreatHeatMap";
 import SystemAlerts from "@/components/SystemAlerts";
 import ReportPanel from "@/components/ReportPanel";
 import AnalysisProgress from "@/components/AnalysisProgress";
+import ImageUpload from "@/components/ImageUpload";
 
 type AppState = 'home' | 'options' | 'analyzing' | 'completed';
 
 const Index = () => {
   const [currentState, setCurrentState] = useState<AppState>('home');
   const [selectedAnalysisType, setSelectedAnalysisType] = useState<string>('');
+  const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
+  const [showImageUpload, setShowImageUpload] = useState(false);
+  const [uploadedReferenceImage, setUploadedReferenceImage] = useState<File | null>(null);
 
   const handleUploadClick = () => {
     setCurrentState('options');
@@ -19,7 +24,13 @@ const Index = () => {
 
   const handleOptionSelect = (option: string) => {
     setSelectedAnalysisType(option);
-    setCurrentState('analyzing');
+    
+    // Show image upload for facial recognition or complete analysis
+    if (option === 'facial-recognition' || option === 'all') {
+      setShowImageUpload(true);
+    } else {
+      setCurrentState('analyzing');
+    }
   };
 
   const handleCancelOptions = () => {
@@ -37,6 +48,24 @@ const Index = () => {
   const handleBackToHome = () => {
     setCurrentState('home');
     setSelectedAnalysisType('');
+    setUploadedVideo(null);
+    setUploadedReferenceImage(null);
+  };
+
+  const handleVideoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith('video/')) {
+      setUploadedVideo(file);
+    }
+  };
+
+  const handleImageUploaded = (image: File) => {
+    setUploadedReferenceImage(image);
+    setCurrentState('analyzing');
+  };
+
+  const handleCloseImageUpload = () => {
+    setShowImageUpload(false);
   };
 
   return (
@@ -54,17 +83,49 @@ const Index = () => {
         />
       )}
 
+      {/* Image Upload Modal */}
+      {showImageUpload && (
+        <ImageUpload
+          onClose={handleCloseImageUpload}
+          onImageUploaded={handleImageUploaded}
+          analysisType={selectedAnalysisType}
+        />
+      )}
+
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">
         {/* Title Section */}
         <NeuroSightTitle />
 
-        {/* Upload & Analyze Button (Home State) */}
+        {/* Video Upload & Analysis Controls (Home State) */}
         {currentState === 'home' && (
-          <div className="flex justify-center mb-8">
+          <div className="flex flex-col items-center space-y-4 mb-8">
+            {/* Video Upload */}
+            <div className="flex flex-col items-center space-y-3">
+              <label className="flex flex-col items-center px-6 py-4 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary transition-colors">
+                <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                <span className="text-sm text-muted-foreground">
+                  {uploadedVideo ? uploadedVideo.name : "Upload Video File"}
+                </span>
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoUpload}
+                  className="hidden"
+                />
+              </label>
+              {uploadedVideo && (
+                <div className="text-xs text-success">
+                  ✓ Video uploaded: {uploadedVideo.name}
+                </div>
+              )}
+            </div>
+
+            {/* Upload & Analyze Button */}
             <button
               onClick={handleUploadClick}
-              className="px-8 py-3 bg-gradient-primary text-primary-foreground rounded-lg font-semibold text-lg hover:shadow-glow-primary transition-all duration-300 transform hover:scale-105"
+              disabled={!uploadedVideo}
+              className="px-8 py-3 bg-gradient-primary text-primary-foreground rounded-lg font-semibold text-lg hover:shadow-glow-primary transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               Upload & Analyze
             </button>
