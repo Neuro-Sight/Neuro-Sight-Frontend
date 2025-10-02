@@ -1,5 +1,10 @@
-import { useState } from "react";
-import { Upload } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Upload, LogOut, User } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Session } from "@supabase/supabase-js";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import NeuroSightTitle from "@/components/NeuroSightTitle";
 import AnalysisOptions from "@/components/AnalysisOptions";
 import AnalysisCenter from "@/components/AnalysisCenter";
@@ -12,11 +17,29 @@ import ImageUpload from "@/components/ImageUpload";
 type AppState = 'home' | 'options' | 'analyzing' | 'completed';
 
 const Index = () => {
+  const navigate = useNavigate();
+  const [session, setSession] = useState<Session | null>(null);
   const [currentState, setCurrentState] = useState<AppState>('home');
   const [selectedAnalysisType, setSelectedAnalysisType] = useState<string>('');
   const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [uploadedReferenceImage, setUploadedReferenceImage] = useState<File | null>(null);
+
+  useEffect(() => {
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleUploadClick = () => {
     setCurrentState('options');
@@ -53,9 +76,27 @@ const Index = () => {
   };
 
   const handleVideoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!session) {
+      toast.error("Please login to upload videos");
+      navigate("/auth");
+      return;
+    }
+    
     const file = event.target.files?.[0];
     if (file && file.type.startsWith('video/')) {
       setUploadedVideo(file);
+    }
+  };
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Error logging out");
+    } else {
+      toast.success("Logged out successfully");
+      setCurrentState('home');
+      setUploadedVideo(null);
+      setUploadedReferenceImage(null);
     }
   };
 
@@ -70,9 +111,36 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Header with system time */}
-      <div className="absolute top-4 right-4 text-sm text-muted-foreground font-mono">
-        System Time: {new Date().toLocaleTimeString()}
+      {/* Header with auth and system time */}
+      <div className="absolute top-4 right-4 flex items-center gap-4">
+        {session ? (
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground font-mono">
+              <User className="h-4 w-4" />
+              <span>{session.user.email}</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
+          </div>
+        ) : (
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => navigate("/auth")}
+          >
+            Login / Sign Up
+          </Button>
+        )}
+        <div className="text-sm text-muted-foreground font-mono">
+          System Time: {new Date().toLocaleTimeString()}
+        </div>
       </div>
 
       {/* Analysis Options Modal */}
@@ -123,8 +191,15 @@ const Index = () => {
 
             {/* Upload & Analyze Button */}
             <button
-              onClick={handleUploadClick}
-              disabled={!uploadedVideo}
+              onClick={() => {
+                if (!session) {
+                  toast.error("Please login to analyze videos");
+                  navigate("/auth");
+                  return;
+                }
+                handleUploadClick();
+              }}
+              disabled={!uploadedVideo || !session}
               className="px-8 py-3 bg-gradient-primary text-primary-foreground rounded-lg font-semibold text-lg hover:shadow-glow-primary transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               Upload & Analyze
