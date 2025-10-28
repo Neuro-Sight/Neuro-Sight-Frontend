@@ -18,7 +18,7 @@ const SystemAlerts = () => {
     },
     {
       id: 2,
-      level: "MEDIUM",
+      level: "MEDIUM", 
       source: "Analysis Engine",
       title: "New Upload Processing",
       description: "entrance_cam_morning.mp4 is currently being analyzed",

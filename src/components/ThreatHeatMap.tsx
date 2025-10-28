@@ -27,7 +27,7 @@ const ThreatHeatMap = ({ isAnalyzing = false }: ThreatHeatMapProps) => {
     },
     {
       id: '2',
-      x: 65,
+      x: 65, 
       y: 40,
       severity: 'medium',
       timestamp: new Date(Date.now() - 1000 * 60 * 5),

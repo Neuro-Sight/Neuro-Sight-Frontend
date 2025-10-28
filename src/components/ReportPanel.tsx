@@ -229,4 +229,4 @@ RECOMMENDATIONS:
   );
 };
 
-export default ReportPanel;
+export default ReportPanel; 

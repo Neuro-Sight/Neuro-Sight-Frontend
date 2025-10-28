@@ -15,7 +15,7 @@ export type ChartConfig = {
 
 type ChartContextProps = {
   config: ChartConfig;
-};
+}; 
 
 const ChartContext = React.createContext<ChartContextProps | null>(null);
 

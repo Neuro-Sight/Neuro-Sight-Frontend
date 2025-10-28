@@ -17,7 +17,7 @@ export function Toaster() {
             <ToastClose />
           </Toast>
         );
-      })}
+      })} 
       <ToastViewport />
     </ToastProvider>
   );

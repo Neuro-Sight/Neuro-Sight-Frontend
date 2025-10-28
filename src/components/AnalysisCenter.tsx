@@ -76,7 +76,7 @@ const AnalysisCenter = ({ onUploadClick }: AnalysisCenterProps) => {
 
       {/* Action Buttons */}
       <div className="flex flex-wrap gap-3">
-        <Button
+        <Button 
           onClick={onUploadClick}
           className="bg-gradient-primary hover:shadow-glow-primary transition-all duration-300"
         >

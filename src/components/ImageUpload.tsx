@@ -61,7 +61,7 @@ const ImageUpload = ({ onClose, onImageUploaded, analysisType }: ImageUploadProp
           </Button>
         </div>
 
-        <p className="text-sm text-muted-foreground mb-4">
+        <p className="text-sm text-muted-foreground mb-4"> 
           Upload a reference image for facial recognition matching (PNG/JPG format)
         </p>
 

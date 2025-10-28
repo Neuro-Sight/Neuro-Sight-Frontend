@@ -14,7 +14,7 @@ interface AnalysisProgressProps {
 const AnalysisProgress = ({ analysisType, onTerminate, onComplete }: AnalysisProgressProps) => {
   const [progress, setProgress] = useState(0);
   const [isRunning, setIsRunning] = useState(true);
-  const [currentPhase, setCurrentPhase] = useState("Initializing");
+  const [currentPhase, setCurrentPhase] = useState("Initializing"); 
   const [detections, setDetections] = useState(0);
   const [threats, setThreats] = useState(0);
 

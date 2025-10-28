@@ -11,7 +11,7 @@ interface AnalysisOptionsProps {
 const AnalysisOptions = ({ onOptionSelect, onCancel }: AnalysisOptionsProps) => {
   const [selectedOption, setSelectedOption] = useState<string>("");
 
-  const options = [
+  const options = [ 
     {
       id: "object-detection",
       title: "Object Detection",
