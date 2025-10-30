@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Neuro Sight Design System - Cyberpunk Aesthetic */
+    --background: 210 25% 8%;
+    --foreground: 180 100% 85%;
+
+    --card: 210 30% 12%;
+    --card-foreground: 180 100% 85%;
+
+    --popover: 210 30% 12%;
+    --popover-foreground: 180 100% 85%;
+  
+    --primary: 187 100% 50%;
+    --primary-foreground: 210 25% 8%;
+    --primary-glow: 187 100% 70%;
+
+    --secondary: 210 30% 18%;
+    --secondary-foreground: 180 100% 85%;
+
+    --muted: 210 25% 15%;
+    --muted-foreground: 180 50% 65%;
+
+    --accent: 284 100% 70%;
+    --accent-foreground: 210 25% 8%;
+
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 180 100% 85%;
+
+    --border: 210 30% 20%;
+    --input: 210 30% 15%;
+    --ring: 187 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Status Colors */
+    --success: 142 76% 60%;
+    --warning: 43 100% 65%;
+    --info: 200 100% 70%;
+    --critical: 0 85% 60%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-cyber: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    --gradient-dark: linear-gradient(180deg, hsl(var(--background)), hsl(var(--card)));
+
+    /* Glows and Effects */
+    --glow-primary: 0 0 30px hsl(var(--primary) / 0.5);
+    --glow-accent: 0 0 30px hsl(var(--accent) / 0.5);
+    --shadow-cyber: 0 10px 40px -10px hsl(var(--primary) / 0.3);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-glow: box-shadow 0.3s ease;
+  }
+
+  .dark {
+    /* Already optimized for dark theme */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
